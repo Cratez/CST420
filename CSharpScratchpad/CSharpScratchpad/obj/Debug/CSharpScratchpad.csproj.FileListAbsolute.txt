@@ -1,0 +1,6 @@
+C:\Users\johnhar1\Desktop\CST420\Assignments\A1\CST420\CSharpScratchpad\CSharpScratchpad\bin\Debug\CSharpScratchpad.exe.config
+C:\Users\johnhar1\Desktop\CST420\Assignments\A1\CST420\CSharpScratchpad\CSharpScratchpad\bin\Debug\CSharpScratchpad.exe
+C:\Users\johnhar1\Desktop\CST420\Assignments\A1\CST420\CSharpScratchpad\CSharpScratchpad\bin\Debug\CSharpScratchpad.pdb
+C:\Users\johnhar1\Desktop\CST420\Assignments\A1\CST420\CSharpScratchpad\CSharpScratchpad\obj\Debug\CSharpScratchpad.csprojResolveAssemblyReference.cache
+C:\Users\johnhar1\Desktop\CST420\Assignments\A1\CST420\CSharpScratchpad\CSharpScratchpad\obj\Debug\CSharpScratchpad.exe
+C:\Users\johnhar1\Desktop\CST420\Assignments\A1\CST420\CSharpScratchpad\CSharpScratchpad\obj\Debug\CSharpScratchpad.pdb
