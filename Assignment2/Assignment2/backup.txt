@@ -1,0 +1,36 @@
+//class istream_getline_iterator
+//	: public std::iterator<std::input_iterator_tag, std::string>
+//{
+//public:
+//	class istream_getline_iterator(std::istream& is) : m_is(&is)
+//	{
+//		readLine();
+//	}
+//	class istream_getline_iterator() : m_is(0) { }
+//
+//	//operators
+//	std::string operator*() 
+//	{
+//		return m_line;
+//	}
+//	istream_getline_iterator& operator++()
+//	{
+//		readLine();
+//		return *this;
+//	}
+//	bool operator==(const istream_getline_iterator& rhs) const
+//	{
+//		return rhs.m_is == m_is;
+//	}
+//	bool operator!=(const istream_getline_iterator& rhs) const
+//	{
+//		return !(*this == rhs);
+//	}
+//private:
+//	std::istream* m_is;
+//	std::string m_line;
+//	void readLine() {
+//		if (m_is && !std::getline(*m_is, m_line)) m_is = 0;
+//	}
+//
+//

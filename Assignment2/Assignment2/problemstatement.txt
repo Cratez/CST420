@@ -1,0 +1,234 @@
+
+CST 420  -  Assignment 2  - The Indexer
+
+
+Due: Sunday, July 17th by 11:59pm
+
+
+Synopsis:
+
+You are to design and implement a program that indexes a document file.
+When the program starts, it will prompt the user for two file names. Both
+arguments will be the names of text files. The first file is the document
+file and the second file is a skip-words file.
+
+The indexer program is to create an index for all words in the document
+file that are not in the skip-words file. For each index entry, each page
+number and line number on which the word occurs should be displayed in
+the index. The following format should be used when displaying index
+entries:
+
+  word
+    pg#.ln#
+
+'word' is a word from the document file that doesn’t exist in the
+skip-words file. 'pg#' is the page number on which word occurs. 'ln#' is
+the line number on which word is found. For example, if the word "hello"
+is found on page 2 line 6, the index entry should appear like this:
+
+  hello
+    2.6
+
+If the same word also appears on page 3 line 12, its index entry should
+look like this:
+
+  hello
+    2.6, 3.12
+
+Notice there is no comma character after the last page/line number. I'm
+expecting the output of your program to be formatted exactly as I've
+shown above and in the sample run below.
+
+In the interest of simplicity, all index output should be just lowercase.
+The word for the index should be displayed in alphabetical order, and the
+index entries should be in page/line order. No duplicate index entries
+should be displayed.
+
+
+Here’s some general information/requirements regarding the document file:
+
+ - Blank lines in the file are allowed.
+
+ - The string "<newpage>" by itself on a line in the document file
+   indicates a page break. There will be no page break identified at the
+   beginning of the first page or at the end of the last page.
+
+ - There will be no punctuation in the middle of words (no hyphenated
+   words and no words with apostrophies).
+
+ - All punctuation at the beginning and end of words should be ignored.
+   Note: there may be more than one punctuation character at the end of
+   words as in the following sample sentence: He said, "Go for the gold".
+
+ - Even though the text in the input file may be upper and/or lower case,
+   your program should not be case sensitive. For example, the words
+   "Cow" and "cow" should be treated as the same word.
+
+ - If either the document file or the skip-words file is not found, your
+   program should display an error message and terminate.
+
+
+The skip-words file will contain words for which index entries are not to
+be created. The format of the words in this file is a single word per
+line. The words will not contain punctuation. The words in the file will
+not necessarily be in alphabetical order. There will be no blank lines in
+this file (including at the end of the file).
+
+The following sample files can be found on the Assignments web page...
+
+Here is a sample document file (doc.txt):
+
+	The quick brown fox
+	jumped over the lazy blue
+	fox. I can not believe I wrote such
+	a common phrase.
+	<newpage>
+	Where or where are you tonight?
+	Why did you leave me here all
+
+	alone?
+	<newpage>
+	I searched the world over
+	and thought I found true love.
+
+
+Here is a sample skip-words file (skip.txt):
+
+	why
+	are
+	did
+	here
+	I
+	not
+	me
+	a
+	or
+	you
+	such
+	where
+	and
+	the
+
+
+Here is a sample run of the program for the above input files:
+
+	Enter document file name: doc.txt
+	Enter the skip-words file name: skip.txt
+
+	Index
+	-----
+	all
+	  2.2
+	alone
+	  2.4
+	believe
+	  1.3
+	blue
+	  1.2
+	brown
+	  1.1
+	can
+	  1.3
+	common
+	  1.4
+	found
+	  3.2
+	fox
+	  1.1, 1.3
+	jumped
+	  1.2
+	lazy
+	  1.2
+	leave
+	  2.2
+	love
+	  3.2
+	over
+	  1.2, 3.1
+	phrase
+	  1.4
+	quick
+	  1.1
+	searched
+	  3.1
+	thought
+	  3.2
+	tonight
+	  2.1
+	true
+	  3.2
+	world
+	  3.1
+	wrote
+	  1.3
+
+You'll find a sample executable for this assignment on the
+assignments web page.
+
+Things I’ll be looking for in this assignment:
+
+  ** You are NOT allowed to use dynamic memory in your solution
+     for this assignment ... other than what the STL containers
+     and std::string provide for you automatically. So there
+     should not be any calls to operator new or operator delete
+     in what you write.
+
+  ** You are NOT allowed to use the C++ friend language construct
+     for this assignment, EXCEPT in the case of overloading
+     operator<< or operator>> for any classes you design/implement.
+
+ - Correct functionality !!
+ - Good class design
+ - Good coding style
+ - Modular layout of code and good use of files
+ - Good use of the std::string class
+     - use std::string in place of a character array any place you
+       need a string of characters.
+ - Correct use of C++ Standard Library functionality
+     - I am expecting that you will use STL containers for this
+       assignment; which kind of containers is up to you.
+ - If you define any classes of your own, make sure they:
+     - are fully const-correct
+     - can be safely copied and assigned (or this functionality
+       should be explicitly prevented)
+ - Don't put the entire assignment in one file. Break it up
+   logically into headers and body files based on the classes you
+   design/implement. Think of your classes as something you may
+   be able to reuse in the future for some other need. Create things
+   that are generic and apply to your need, rather than specific to
+   your need that won't have any use in the future. Once you have
+   something generic, put it in it's own .h/.cpp files so it's easy
+   to reuse later on.
+
+
+Suggestions:
+
+ - Use as many of features of the C++ Standard Library as you can
+   to simplify the work you need to do on this assignment. For example:
+
+     - use the std::string class rather than using character arrays
+     - use STL containers to make your life easy for storing the data
+       this program will work with.
+
+ - Spend some time designing this program before just sitting down and
+   writing code. Think of things like the following before choosing your
+   implementation strategy:
+
+     - For the words in the skip-words file use a container that will
+       allow you to lookup words quickly so that as you’re reading in
+       the document file you can quickly determine if the words you read
+       need to be indexed.
+
+     - You’ll probably need some kind of combination data structure for
+       keeping track of the words to index and all the places at which
+       the words appear. Think object-oriented (black-box) and define a
+       class or two to encapsulate functionality of indexing to simplify
+       your design and implementation.
+
+   If you want any assistance with designing classes that help break
+   this assignment down in a good object-oriented way, just ask me.
+
+What to send me:
+
+  - Send me all your source code files you write for the assignment. Do
+    not send me object code files or executable files.
