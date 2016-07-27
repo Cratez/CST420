@@ -1,0 +1,562 @@
+
+
+Assignment 3 FAQ...
+
+
+******* #8
+
+> I can't seem to get the remove_if() algorithm working.  I'm trying
+> to remove Rider entries from a container if a predicate function object
+> returns true for them.  Here's the function object:
+>
+>  struct  IsMatch
+>  {
+>    bool  operator()( const Rider  &rider )  const
+>    {
+>      ...   // returns true or false
+>    }
+>  }
+>
+> Here's the code that uses it along with remove_if():
+>
+>   list<Rider>  riders;
+>   ...
+>
+>   remove_if( riders.begin(), riders,end(), IsMatch() );
+
+The remove_if() algorithm doesn't actually remove the matching elements
+from the container like the name implies.  It actually moves the matching
+elements to the end of the container and returns an iterator to the first
+element that matches the criteria.  This iterator can then be used to
+actually get rid of the objects using the container's erase() member
+function.  Like this:
+
+  list<Rider>::iterator  new_end;
+
+  new_end  =  remove_if( riders.begin(), riders,end(), IsMatch() );
+
+  riders.erase( new_end, riders.end() );
+
+Note, since remove_if() changes the order of objects within the container,
+it can not be used with any of the sorted containers (set<>, multiset<>,
+map<>, multimap<>).
+
+For more detailed documentation on remove_if(), see here:
+   http://www.sgi.com/tech/stl/remove_if.html
+
+
+******* #7
+
+>When doing team times for all stages I'm getting different results
+>than your sample executable for some teams yet my algorithm looks
+>correct.  My program gets these values:
+>
+>  Team    Time
+>  -----------------
+>  DSC     29"59'45
+>  CSC     30"01'13
+>  TMO     30"03'02
+>  ...
+>
+>but your program gets these:
+>
+>  Team    Time
+>  -----------------
+>  DSC     29"59'45
+>  CSC     29"59'47
+>  TMO     30"03'02
+>  ...
+
+For team time for all stages you totaled the three fastest
+times for the entire race, not the team times for the
+individual stages (which is what's indicated in the
+assignment handout). Sometimes these are the same thing,
+and sometimes they're not, it depends on individual rider
+times. If you don't see why, consider this data set of stage
+times for a team:
+
+  Rider  Stage 1  Stage 2  Stage 3  Stage 4  Overall 
+  -----  -------  -------  -------  -------  -------
+    A      20 *     10 *     20 *     10 *     60 *
+    B      40       10 *     20 *     30       100 
+    C      50       10 *     20 *     20 *     100 
+    D      30 *     10       20       30       90 *
+    E      10 *     10       20       10 *     50 *
+
+The "Overall" column is the sum of the times for each
+stage.
+
+The * is the three fastest times for each stage.
+
+The team time if you just look at the overall column for the
+three fastest times for the entire race is 200. This is how
+your algorithm is calculating it.
+
+Here's the team times (sum of * values) for each stage:
+
+  Stage  Team time
+  -----  ---------
+    1      60
+    2      30
+    3      60
+    4      40
+
+The sum of team times for each stage is 190, which is the
+correct value based on the algorithm requirements specified
+in the assignment handout.
+
+
+******* #6
+
+> I have a class called Rider with a member function Rider::name() which
+> returns the string with the rider's name.  In RaceAnalyzer, I have a
+> container of Rider objects.  I'm working on the RaceAnalyzer::riders()
+> member function, which is supposed to return a set of strings with the
+> rider names.  I can't figure out how to take my container of Rider
+> objects and convert it to a set of strings which only contain the rider
+> name.  Can you give me a pointer on how to do this?	
+
+Essentially what you're asking is "how to transform Rider data into
+name (string) data".  This is exactly what the transform() algorithm
+will do for you.
+
+First, create a simple function object that takes a Rider object and
+returns the name for that rider:
+
+  string  riderToName( const Rider  &rider )
+  {
+    return  rider.name();
+  }
+
+To create a set of names for each of the riders, use the transform()
+algorithm along with your container of Rider data (which I'll assume
+is called m_riders) and the conversion function object:
+
+  StrSet  result;
+
+  transform( m_riders.begin(),
+             m_riders.end(),
+             inserter( result, result.end() ),
+             riderToName() );
+
+This takes each Rider object from m_riders, passes it into riderToName(),
+and then inserts the resulting name string into the set called "result".
+
+---
+
+Here's another way to do it using a lamda function rather than a function
+object:
+
+  StrSet  result;
+
+  transform( m_riders.begin(),
+             m_riders.end(),
+             inserter( result, result.end() ),
+             [](const Rider  &rider){ return  rider.name(); } );
+
+
+******* #5
+
+> I have a operator>> for my Rider class that will populate the Rider
+> object from one line of data in the rider file.  I have it successfully
+> reading in the rider's name, country and team.  I'm using getline()
+> to read the rest of the line into a buffer.  I'm then using a stringstream
+> object and an istream_iterator<int> to parse out the individual seconds
+> values for each stage.  I am now having a problem  where my program seems
+> to be adding all the times into each successive Rider object.  What gives?
+
+  Note: I'm assuming rhs is the name of your right-hand parameter
+        to operator>> and that m_times is the name of your container in
+        Rider that will hold the stage times.
+
+The short answer:
+
+  In operator>> for Rider add the following statement anywhere before
+  you make the call to copy() to populate the container of stage times
+  for the Rider:
+ 
+    rhs.m_times.clear();
+
+The longer explanation of what's going on here:
+
+  The operator>> function for Rider takes a Rider parameter "rhs"
+  by reference.  The behavior you experienced where the m_times kept
+  growing with each successive call to operator>> indicates that
+  the same Rider object is continously being passed into operator>>.
+
+  To understand why this happening, you need to look at where Rider's
+  operator>> is being called.  Most likely, you're using the copy
+  algorithm along with a istream_iterator<Rider> from within your
+  RaceAnalyzer class.  Something like this:
+
+    typdef  istream_iterator<Rider>  RiderInIter;
+
+    RiderInIter  inIter( riderFilenameString );
+
+    copy( inIter, RiderInIter(), inserter( m_riders, m_riders.end() ) );
+
+  The stream insertion iterator parameter complicates things,
+  but think of the copy algorithm as essentially doing something like
+  this:
+
+    copy( inStream, end_of_file, m_riders )
+    {
+      Rider  r;     // POINT-A
+
+      while( inStream != end_of_file )
+      {
+        // POINT-B
+
+        inStream  >>  r;
+
+        m_riders.insert( r );
+      }
+    }
+
+  Notice that object 'r' is defined prior to the while-loop at POINT-A.
+  Therefore, the same 'r' object is used for each call to the container's
+  insert(). Hence, if you don't clear the m_times container inside your
+  operator>> function, it will get the "growing" behavior you experienced.
+
+  So you might ask "why wasn't 'r' defined at POINT-B rather than POINT-A?
+  If that was the case, then the call to clear() wouldn't be necessary".
+  Good question.  It actually would be less efficient if it was defined
+  at POINT-B because it would then do a Rider object contruction and
+  destruction for each loop iteration.  However, that's not the real reason
+  it's done the way it is.
+
+  The 'r' object isn't really defined inside copy at all. I just showed
+  it that way above to illustrate conceptually what's happening.  It's
+  actually defined as part of the inserter() adaptor, which you specified
+  as the third parameter to calling copy().  So it really is defined
+  prior to copy's while-loop.
+
+
+******* #4
+
+> I have a Rider class to maintain all the data for one rider.  I'm trying
+> to implement operator>> for this class so that I can use the copy algorithm to
+> read in all the data from the riders file into the container of Rider objects
+> that I have in the RaceAnalyzer class.  In operator>>, I'm having trouble
+> getting an algorithm to loop for the correct number of stages so I can grab
+> the seconds on each stage for each rider.  Got any advice?
+
+The first data on each line in the rider file is the rider's name, team,
+and country.  Read these in as strings using operator>>. Read the rest of
+the line into string buffer using getline(). Then use a stringstream object
+and an istream_iterator to get the rider's stage time data into a container
+using the copy algorithm.
+
+
+******* #3
+
+> It seems like there is a lot of different ways I could store the stage and
+> rider data inside the RaceAnalyzer.  I'm trying to figure out how best to do
+> this so that I can easily convert the data into the various sets and lists
+> that are required by the public member functions.  Got any suggestions on
+> where to start?
+
+I think my biggest suggestions for this assignment is to keep your class model
+simple, keep your use of STL containers simple, and focus on the power of
+algorithms to do the work for you.
+
+A race is made up of two types of information: stage data and rider data.  So
+your RaceAnalyzer class could just have two member objects: one for stage data
+and one for rider data.
+
+The stage data is the simplest.  It's just a sequence of numbers where each
+number represents the distance for a particular stage. You could represent all
+the stage data for the entire race with a simple container of numbers.  Choose
+a container type that allows for easy access to any stage's distance.
+
+Rider data isn't as simple as stage data but it's still not very complicated.
+For each rider there is more data than just a single number.  There's a name,
+country, team, and a sequence of times for each stage.  The most appropriate
+approach would be a class that represents a rider.  An instance of this class
+would contain all the data for a single rider.  The name, country, and team
+are simple strings.  The stage times would need to be a container of numbers,
+similar to what's mentioned above for the stage distances, but contained
+within the Rider class.
+
+
+******* #2
+
+> I want to create a function object that takes more than
+> one parameter. But function objects usually just take
+> one parameter; the container element. Is there a way
+> to pass additional data to function objects?
+
+Yes. There are two ways to do it:
+
+#1 - Create a constructor for your function object that
+     takes the additional data as parameters and stores it
+     in member variables. Then when the function object is
+     invoked as a function it has access to the member
+     data.
+
+#2 - Derive your function object from the STL binary_function<>
+     template class. Then it can take multiple parameters.
+     You'll have to use the bind1st() or bind2nd()
+     function object adapter to pass the additional data
+     to your function object.
+
+Samples of each approach are shown below...
+
+
+  //
+  // This example illustrates how to pass additional data
+  // to a function object using two different techniques.
+  //
+
+  #include  <iostream>
+  #include  <algorithm>
+  #include  <functional>
+
+  using  namespace  std;
+
+
+  //
+  // This function object determines if one value is
+  // divisible by another. The "rhs" value is passed in
+  // as a parameter to the function object constructor.
+  // The "lhs" value comes as a parameter when the
+  // object is invoked as a function.
+  //
+  class  IsDivisibleBy_A
+  {
+    public  :
+
+      IsDivisibleBy_A( int  value )  :  m_rhs(value)  {}
+
+      bool  operator()( const int  lhs )  const
+      {
+        return  ! ( lhs  %  m_rhs );
+      }
+
+    private  :
+
+      int  m_rhs;
+  };
+
+
+  //
+  // This function object determines if one value is
+  // divisible by another. The "lhs" and "rhs" values are
+  // passed in as a parameters when the object is invoked
+  // as a function.
+  //
+  struct  IsDivisibleBy_B  :  binary_function<int, int, bool>
+  {
+    bool  operator()( const int  lhs, const int  rhs )  const
+    {
+      return  ! ( lhs  %  rhs );
+    }
+  };
+
+
+  //
+  // Main program
+  //
+  int  main()
+  {
+    //
+    // Setup a container of elements to use with the function
+    // objects.
+    //
+    int  a[]  =  { 21, 54, 26, 88, 32, -3, 36, 94, 50, 4 };
+    int  sz  =  sizeof(a) / sizeof(*a);
+
+
+    //
+    // Determine how many of the container elements are divisible
+    // by 3 using the first function object technique.
+    //
+    size_t  resultA  =  count_if( a, a+sz, IsDivisibleBy_A(3) );
+
+
+    //
+    // Determine how many of the container elements are divisible
+    // by 3 using the second function object technique.
+    //
+    size_t  resultB  =  count_if( a,
+                                  a+sz,
+                                  bind2nd( IsDivisibleBy_B(), 3 ) );
+
+
+    //
+    // Display the results. They better be the same.
+    //
+    cout  <<  "Result A : "  <<  resultA  <<  endl
+          <<  "Result B : "  <<  resultB  <<  endl;
+
+
+    return  0;
+  }
+
+
+******* #1
+
+> How can I read the contents of a file into a map<> container
+> using the copy() algorithm?
+
+Let's assume that to start with you have a class to represent
+the data you're reading from the file and that you've overloaded
+operator>> and that you want to use the copy() algorithm with
+an input stream iterator to read from the file and insert into
+your map<>.
+
+You are not going to be able to use the copy() algorithm to
+get records into a map<> from a file. Since maps are paired
+containers you must insert a key/value pair<> into the map<>
+object when you want to create a new map element. But the
+copy() algorithm isn't going to convert your data type to
+a pair<> object.
+
+A better solution is to use the transform() algorithm rather than
+copy(). transform() can read the elements from the file (the
+same way you do with copy), then use a function object to
+convert them into a key/value pair<>, then use an insert
+iterator to insert the pair into the map. Sounds confusing,
+but it's really very simple.
+
+Below is a program that shows just how to do this. It uses
+transform() to read a data file, translate it into a pair<>
+object, and insert pairs into a map<>.
+
+
+  //
+  // This example illustrates how to use the STL transform()
+  // algorithm along with a input stream iterator and a
+  // function object to populate a map<> container.
+  //
+  // The map<> in this example will contain a person's
+  // social security number for the KEY and the person's
+  // first name as the VALUE.
+  //
+  // This program assumes there is a data file called "data.txt"
+  // in the current working directory that contains ssn/name
+  // information. Here is a sample of file contents:
+  //
+  //    546783944 John
+  //    584322841 Frank
+  //    899302463 Bob
+  //    483757432 Alfred
+  //
+  
+
+  #include  <string>
+  #include  <iostream>
+  #include  <fstream>
+  #include  <map>
+  #include  <algorithm>
+
+  using  namespace  std;
+
+
+  //
+  // Class used to read input from a stream.
+  //
+  class  Person
+  {
+    friend  istream  &operator>>( istream  &in, Person  &rhs );
+
+   public  :
+
+      unsigned     ssn()  const  { return  m_ssn; }
+      string  name()  const  { return  m_name; }
+
+    private  :
+
+      unsigned     m_ssn;
+      string  m_name;
+  };
+
+
+  typedef  map<unsigned, string>   MyMap;
+     //
+     // Type to represent the Map of ssn/name
+     //
+
+  typedef  pair<unsigned, string>  MyMapPair;
+     //
+     // Type for a ssn/name pair
+     //
+
+  typedef  istream_iterator<Person>     PInIter;
+     //
+     // Type to represent an Person input stream iterator
+     //
+
+
+  //
+  // Stream exaction operator. Used to read data from
+  // file into Person object.
+  //
+  istream  &operator>>( istream  &in, Person  &rhs )
+  {
+    return  in >> rhs.m_ssn >> rhs.m_name;
+  }
+
+
+
+  //
+  // Function object to convert a Person object into a ssn/name pair.
+  //
+  struct PersonToPair
+  {
+    MyMapPair  operator()( const Person  &data )  const
+    {
+      return  MyMapPair( data.ssn(), data.name() );
+    }
+  };
+
+
+
+  //
+  // Main program
+  //
+  int  main()
+  {
+    //
+    // Open the data file
+    //
+    ifstream  iFile("data.txt");
+    if  (! iFile)
+    {
+      cerr  <<  "Error opening file"  <<  endl;
+      return  1;
+    }
+
+
+    //
+    // Associate the file with an input stream iterator
+    //
+    PInIter       in(iFile);
+
+
+    //
+    // Create and populate the map
+    //
+    MyMap  myMap;
+
+    transform( in,
+               InIter(),
+               inserter( myMap, myMap.end() ),
+               PersonToPair() );
+
+
+    //
+    // Show the map contents
+    //
+
+    MyMap::const_iterator  iter;
+
+    for( iter = myMap.begin();  iter != myMap.end();  ++iter )
+    {
+      cout  <<  "SSN : "      <<  iter->first
+            <<  "   Name : "  <<  iter->second  <<  endl;
+    }
+
+
+    return  0;
+  }

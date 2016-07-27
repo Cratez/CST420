@@ -1,0 +1,266 @@
+
+CST 407  -  Assignment 3  - Race Analyzer
+
+
+Due: Sunday, July 31st by 11:59pm
+
+
+Snopsis
+-------
+
+In this assignment you are provided with the public interface for a
+class called RaceAnalyzer along with a test program that uses the
+class. Your job is to provided the implementation of the RaceAnalyzer
+class, along with supporting classes/functions as necessary.
+
+
+The Data Files
+--------------
+
+The input to the RaceAnalyzer class are two text files:
+
+  Stage File
+  ----------
+
+    This file contains information as to the length of each stage in the
+    race. The format of the file is as follows:
+
+      One line in the file for each stage. The data for each stage consists
+      of a single floating-point value that indicates the length of the stage
+      in miles.
+
+  Rider Data File
+  ---------------
+
+    This file contains information about each rider in the race along with
+    their times for each stage. The format of this file is as follows:
+
+      One line in the file for each rider in the race. The line contains
+      the following fields of data separated by a single space:
+         o Rider last name: single word
+         o Rider's home country: single word, always three characters long
+         o Rider's team name: single word, always three characters long
+         o Number of seconds it took the rider to complete each stage of
+           the race
+
+A sample stage file (stages.dat) and rider data file (riders.dat) is
+provided for you on the assigments web page.
+
+
+RaceAnalyzer class description
+------------------------------
+
+The public interface to the RaceAnalyzer class is provided for you in the
+file RaceAnalyzer.h on the assignment's web page. You are not allowed to
+change the public member function interfaces for this class. You are
+allowed to provide any private/protected section contents for this class
+based on your design.
+
+There are a number of typedef's provided for you in the public section of
+the RaceAnalyzer class. These typedefs are documented in the header file.
+
+The following is an explanation of the functionality that is to be provided
+by each of RaceAnalyzer's public member functions:
+
+  Constructor( stageFilename, riderFilename )
+    This routine takes the stage filename and rider data filename as
+    parameters and does whatever is necessary to setup the internal data
+    structures of the RaceAnalyzer class. If the file open operation of
+    either the stage or rider data files fails, you program should
+    display an error message that includes the filename and then throw
+    an exception with a value of fileOpenFailure_.
+
+  numStages()
+    Returns the number of stages in the race.
+
+  getTeam( riderName )
+    Returns the name of the team for a specified rider.
+
+  getCountry( riderName )
+    Returns the name of the country for a specified rider.
+
+  riders()
+    Returns a sorted set of names of all the riders in the race.
+
+  teams()
+    Returns a sorted set of unique team names for all the teams
+    represented in the race.
+
+  countries()
+    Returns a sorted set of unique country names for all the
+    countries represented in the race.
+
+  riderResults( stage, team, country )
+    Returns a sorted set of time/rider-name information
+    according to the following criteria:
+
+      o if the stage parameter is 0, then the time for each
+        rider should be the number of seconds it took to complete
+        the entire race. If the stage is between 1 and numStages(),
+        then the time for the specific stage should be used for
+        each rider.
+
+      o if the team string parameter is zero length, then riders
+        from all teams should be included in the resulting set. If
+        the team string is not zero length, then only riders from
+        the specified team should be included.
+
+      o if the country string parameter is zero length, then riders
+        from all countries should be included in the resulting set.
+        If the country string is not zero length, then only riders
+        from the specified country should be included.
+
+  teamTime( teamName, stage, numRiders )
+    Returns the time it took the numRiders fastest people on the
+    specified team to complete the stage/race. For example, if
+    numRiders is a value of three, the team time is the sum of
+    the times for the three fastest riders. The following criteria
+    should be used by this member function:
+
+      o if the stage is between 1 and numStages(), the team's time
+        for the specific stage should be returned. This is
+        determined by totaling the time for the team's numRiders
+        fastest riders for the stage.
+
+      o if the stage parameter is 0, then the time for the team's
+        entire race should be returned. This is determined by
+        totaling each of the team's individual stage times (see
+        previous bullet).
+
+  calcMPH( seconds, stage )
+    Given a number of seconds, returns the velocity (miles-per-hour)
+    for the stage/race given the following criteria:
+
+      o if the stage parameter is 0, then the MPH is returned based
+        on the distance for the entire race. If the stage is bewteen
+        1 and numStages(), the MPH for the distance of the specific
+        stage should be returned.
+
+
+Assumptions
+-----------
+
+Here’s some general assumptions you can make when implementing this
+assignment:
+
+ - You can assume that data in the text files is formatted exactly as
+   specified above. You do not need to validate the data as it is read
+   into your data structures.
+
+ - You can assume the parameter values passed into the member functions
+   are valid. For example, if a member function takes a stage number as
+   a parameter, you can assume the value is between 0 and numStages(),
+   inclusive.
+
+
+Main program
+------------
+
+The source code for a main program (main.cpp, mainDisplay.h, mainDisplay.cpp)
+to test your RaceAnalyzer class is provided on the assignments web page. This
+program expects full functionality of class member functions in order to
+perform properly. Therefore, this will not make a good test program as you
+first start to implement this assignment. You'll likely want to
+create your own simpler programs to test out your implementation as
+you progress.
+
+By default, the data files names stages.dat and riders.dat are used by
+the main program I've provided. If you want to use different files as
+part of your development/testing, uncomment the PROMPT_FILENAME macro
+at the top of main.cpp to change the program's behavior to prompt for
+file names.
+
+
+Sample executable
+-----------------
+
+You'll find a sample executable for this assignment on the assignments
+web page.
+
+
+Restrictions
+------------
+
+You are to adhere to the following restrictions for this assignment:
+
+  - No use of global variables.
+
+  - No use of C++ friend construct, except for the purpose of
+    implementing operator<< or operator>> for classes you create.
+
+  - No dynamic memory. The STL does all the memory management for
+    you. You should not have a call to operator new or operator
+    delete anywhere in your source code.
+
+  - No looping constructs of any kind are allowed. This includes
+    for-loops, while-loops, do-loops, goto's, and recursion. All
+    iterative-type functonality you need must be done using STL
+    algorithms. If you can't figure out how, ask me.
+
+These are all things I will take off points for if I find you
+doing them in your solution.
+
+
+Things I'll be looking for
+--------------------------
+
+Things I’ll be looking for in this assignment:
+
+ - Correct functionality !!
+ - Good use of STL components (containers, algorithms, iterators,
+   functors)
+ - Good class design
+ - Good coding style
+ - Module layout of code and good use of files
+ - Correct use of C++ Standard Library functionality
+     - I am expecting that you will use STL containers for this
+       assignment. Which kind of containers is up to you.
+ - If you define any classes of your own, make sure they:
+     - are fully const-correct
+     - properly handle dynamic memory (if appropriate)
+     - can be safely copied and assigned (or this functionality
+       should be explicitly prevented)
+ - Don't put the entire assignment in one file. Break it up
+   logically into headers and body files based on the classes you
+   design/implement. Think of your classes as something you may
+   be able to reuse in the future for some other need. Create things
+   that are generic and apply to your need, rather than specific to
+   your need that won't have any use in the future. Once you have
+   something generic, put it in it's own .h/.cpp files so it's easy
+   to reuse later on.
+
+
+Suggestions
+-----------
+
+  Since you are not allowed to use looping constructs you have to
+  think ahead about how you can use STL algorithms to accomplish what
+  you need to do. This in turn will drive the type of data structures
+  (containers) you'll use in your implementation.
+
+  Spend some time designing this program before sitting down and
+  writing code. The most important consideration for this assignment
+  is your data structures: how you choose to store the stage and
+  rider data. Putting effort in designing this can make the
+  implementation of most of the RaceAnalyzer member functions as short
+  as a few lines of code each.
+
+  Keep your design simple. If you think it's getting too complicated
+  ask me for some assistance.
+
+
+What to send me
+---------------
+
+  Send me all source code files that you create/modify (including
+  raceAnalyzer.h). Do not send me a main() program. I'll test
+  your class with my own program.
+
+
+
+Don't hesitate to ask for assistance
+------------------------------------
+
+Contact me if you have difficulty with this assignment ... especially
+when it comes to the design and how you can use STL containers
+algorithms to do what you need to do.
