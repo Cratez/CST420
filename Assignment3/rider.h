@@ -8,15 +8,13 @@ using namespace std;
 class Rider
 {
 public:
-	const bool IsStub;
-
+	//const bool IsStub;
 	Rider::Rider(const string& name, const string& country, const string& team, const vector<int>& times) :
 		mName(name),
 		mCountry(country),
 		mTeam(team),
-		mTimes(times),
-		IsStub(false){}
-	Rider() : IsStub(true) {};
+		mTimes(times)
+	{}
 
 	string getName() const;
 	string getCountry() const;

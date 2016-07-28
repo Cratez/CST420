@@ -145,7 +145,7 @@ private:
 	vector<double> mStageDistances;
 	vector<Rider> mRiders;
 
-	string sToLower(const string& str) const;
+	//string sToLower(const string& str) const;
 	const Rider* RaceAnalyzer::getRider(const string & name) const;//couldnt be by reference for my error handling of returning a stub object
 };
 

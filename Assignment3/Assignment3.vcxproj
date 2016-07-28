@@ -115,7 +115,6 @@
     <ClCompile Include="mainDisplay.cpp" />
     <ClCompile Include="raceAnalyzer.cpp" />
     <ClCompile Include="rider.cpp" />
-    <ClCompile Include="stageDistances.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="FAQ.txt" />
@@ -126,7 +125,6 @@
     <ClInclude Include="mainDisplay.h" />
     <ClInclude Include="raceAnalyzer.h" />
     <ClInclude Include="rider.h" />
-    <ClInclude Include="stageDistances.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="riders.dat" />

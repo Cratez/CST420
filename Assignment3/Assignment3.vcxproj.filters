@@ -24,9 +24,6 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="stageDistances.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="rider.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -47,9 +44,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="mainDisplay.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="stageDistances.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="rider.h">

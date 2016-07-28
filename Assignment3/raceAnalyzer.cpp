@@ -4,8 +4,10 @@
 #include <iostream>
 #include <iterator>
 #include <algorithm>
+#include <numeric>
 #include <sstream>
 
+//Local global function for use in lambda expressions
 string sToLower(const string & str)
 {
 	string lowStr = str;
@@ -69,21 +71,21 @@ string RaceAnalyzer::getCountry(const string & riderName) const
 RaceAnalyzer::StrSet RaceAnalyzer::riders() const
 {
 	StrSet riderSet;
-	transform(mRiders.begin(), mRiders.end(), riderSet.begin(), [](const Rider& rider) {return rider.getName(); });
+	transform(mRiders.begin(), mRiders.end(), inserter(riderSet,riderSet.begin()), [](const Rider& rider) {return rider.getName(); });
 	return riderSet;
 }
 
 RaceAnalyzer::StrSet RaceAnalyzer::teams() const
 {
 	StrSet teamSet;
-	transform(mRiders.begin(), mRiders.end(), teamSet.begin(), [](const Rider& rider) {return rider.getTeam(); });
+	transform(mRiders.begin(), mRiders.end(), inserter(teamSet,teamSet.begin()), [](const Rider& rider) {return rider.getTeam(); });
 	return teamSet;
 }
 
 RaceAnalyzer::StrSet RaceAnalyzer::countries() const
 {
 	StrSet countrySet;
-	transform(mRiders.begin(), mRiders.end(), countrySet.begin(), [](const Rider& rider) {return rider.getTeam(); });
+	transform(mRiders.begin(), mRiders.end(), inserter(countrySet, countrySet.begin()), [](const Rider& rider) {return rider.getTeam(); });
 	return countrySet;
 }
 
@@ -94,11 +96,34 @@ RaceAnalyzer::Results RaceAnalyzer::riderResults(unsigned stage, const string & 
 
 Seconds RaceAnalyzer::teamTime(const string & teamName, unsigned stage, unsigned numRiders) const
 {
+	string lowTName = sToLower(teamName);
+	vector<Rider> topRiders;
+	copy_if(mRiders.begin(), mRiders.end(), back_inserter(topRiders),
+		[&lowTName](const Rider& rider) { return sToLower(rider.getTeam()) == lowTName; });
+
+	//sort the riders
+	sort(topRiders.begin(), topRiders.end(),//ISSUE IS HERE. This wont compile!
+		[&stage](const Rider& lhs, const Rider& rhs)->bool { return (lhs.getTime(stage) > rhs.getTime(stage)); });
+
+	//accumulate the top riders times
+	Seconds sec = accumulate(topRiders.begin(), topRiders.end(), 0,
+		[stage](int total, const Rider& rider) {return total + rider.getTime(stage); });
+	return sec;
+
 	return Seconds();
 }
 
 RaceAnalyzer::MPH RaceAnalyzer::calcMPH(Seconds seconds, unsigned stage) const
 {
+	double stageDistance = 0;
+	if (stage == 0)
+		stageDistance = accumulate(mStageDistances.begin(), mStageDistances.end(), stageDistance);
+	else if(stage < 0 || numStages() < stage){
+		//error...
+	}
+	else
+		stageDistance = mStageDistances.at(stage - 1);
+	return (MPH)(stage / (seconds / 3600));
 	return MPH();
 }
 

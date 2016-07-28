@@ -1,7 +1,5 @@
 #include "rider.h"
-
-
-
+#include <numeric>
 
 string Rider::getName() const
 {
@@ -20,15 +18,17 @@ string Rider::getTeam() const
 
 int Rider::getTime(int stage) const
 {
-	if (stage < 0 || stage > mTimes.size) {
+	if ((int)stage < 0 || (size_t)stage > mTimes.size()) {
+		return 0;
 		//error....
 	}
 	else if (stage == 0) {
-		//accumulate the sum of the vector
+		return accumulate(mTimes.begin(), mTimes.end(), 0);
 	}
 	else {
-		return mTimes.at(stage);
+		return mTimes.at(stage - 1);
 	}
+	return 0;
 }
 
 const vector<int>& Rider::getTimes() const
