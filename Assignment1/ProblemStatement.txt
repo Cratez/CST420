@@ -1,0 +1,120 @@
+
+CST 420 - Assignment 1 (Anagrams)
+
+Due: Sunday, July 3rd by 11:59pm
+
+
+You are to create a program that will generate a list of
+anagrams. Two words are anagrams if each word contains
+exactly the same letters but in a different order. For
+example, the following anagrams contain the same five
+letters:
+
+  caret carte cater crate trace
+
+At startup, your program is to prompt the user for a
+dictionary file name. The dictionary file will contain all
+the words your program is to use to determine
+if a sequence of letters is a valid word. Each word in the
+dictionary file is on a separate line. A sample dictionary
+file called dictionary.txt containing approximately 20,000
+words can be downloaded from the assignments web page.
+
+Your program should continuously prompt for words and show
+the anagrams until the user enters the word "quit". If the
+word entered does not exist in the dictionary or does not
+have any anagrams, your program should indicate that to the
+user.
+
+Here's a sample run of how your program should execute:
+
+    Enter dictionary file name: dictionary.txt
+
+    Enter a word: post
+      Anagrams: spot stop
+
+    Enter a word: bosjf
+      bosjf is not a valid word
+
+    Enter a word: cater
+      Anagrams: caret carte crate trace
+
+    Enter a word: home
+      home does not have any anagrams
+
+    Enter a word: caveat
+      Anagrams: vacate
+
+    Enter a word: quit
+
+
+Note1: the original word is NOT displayed in the list of
+       anagrams. Your program should behave similarly.
+
+Note2: an anagram only appears once (no repeats). Your
+       program should behave similarly.
+
+You'll find a sample Windows executable for the program
+on the assignments web page.
+
+There is a FAQ for this assignment on the web page for
+common questions. Check this FAQ for answers to questions
+you may have. If you don't find the answer there, send me
+email.
+
+Things I'll be specifically looking for:
+
+  - Use good programming conventions: self-documenting
+    class/object names, good internal comments, use of
+    white-space to make your program readable,
+    etc...
+
+  - Don't just put all your code into one file. Create a
+    header (.h) and body (.cpp) file for your classes,
+    separate from your main program. If you're not familiar
+    with how to do this, ask me.
+
+  - Do not use any global variables, including file-static
+    variables. Only local variables (inside functions),
+    private or protected member variables (inside classes),
+    and parameters should be used.
+
+  - Use only ANSI C/C++ language features. Do not use
+    language extensions that are not part of the ANSI
+    standard. If you are not sure whether a language
+    feature/function is part of the ANSI standard, ask me
+    before using it.
+
+
+Notes/Hints:
+
+  - Your program does not have to deal with upper/lower
+    case words. Assume all words in the dictionary are
+    lower case. Assume all user input is lowercase only.
+
+  - Create a dictionary with just a few words in it (some
+    of which are anagrams of each other) to test/debug your
+    program. If you use the dictionary.txt
+    file during your development, it may be difficult to
+    debug.
+
+  - Think "object-oriented" when designing/implementing
+    this program. There are a few good opportunities for
+    classes to help encapsulate functionality.
+
+  - You can use any language features you want to
+    implement this assignment; even if we haven't
+    covered the feature in class yet. Just make sure you
+    use the language feature in the manner in which it was
+    intended to be used.  If you're not sure, ask me.
+
+  - The goal of this assignment is good design and
+    correct functionality. Efficient execution is
+    NOT a goal.
+
+
+What to send me:
+
+  - Send me all your source code files you write for the
+    assignment. Do not send me object code files or
+    executable files.
